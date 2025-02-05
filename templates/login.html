@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: radial-gradient(circle at center, #004d4d, #002020);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }	
+
+        .login-container {
+            background: radial-gradient(circle at center, #004d4d,#002020);
+            padding: 20px;
+            border-radius: 18px;
+            border: 2px solid #00cccc; /* Aqua colored border */
+            box-shadow: 0 0 10px #00cccc;
+            width: 300px;
+            text-align: center;
+            margin-top: 170px;
+	    margin-bottom: 5px;
+        }
+
+        h1 {
+            color: aqua;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            text-align: left;
+	    color: aqua;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 9px;
+            box-sizing: border-box;
+        }
+
+        #password {
+            position: relative;
+        }
+
+        #toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #00cccc; /* Aqua color */
+        }
+
+        a {
+            color: #0bb8a1;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #008080; /* Darker aqua color */
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .error-message, .success-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .error-message {
+            background-color: #ff9999;
+            color: #cc0000;
+        }
+
+        .success-message {
+            background-color: #ccffcc;
+            color: #009900;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <img src="{{ url_for('static', filename='back1.jpg') }}" alt="Logo">
+            <div>
+                <span>Virtual Miner</span>
+            </div>
+        </div>
+        <div class="nav-toggle" onclick="toggleNav()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="{{ url_for('referral_link') }}"><i class="fas fa-link"></i> Referral Link</a></li>
+            <li><a href="{{ url_for('dashboard') }}"><i class="fas fa-chart-bar"></i> Dashboard</a></li>
+            <li><a href="{{ url_for('deposit_form') }}"><i class="fas fa-money-bill-wave"></i> Deposit Form</a></li>
+            <li><a href="{{ url_for('admin_deposit_requests') }}"><i class="fas fa-cogs"></i> Admin Deposit Requests</a></li>
+            <li><a href="{{ url_for('withdrawal_form') }}"><i class="fas fa-money-check-alt"></i> Withdraw Form</a></li>
+            <li><a href="{{ url_for('admin_withdraw_requests') }}"><i class="fas fa-cogs"></i> Admin Withdraw Requests</a></li>
+        </ul>
+    </nav>
+
+    <div class="login-container">
+    <h1>Login</h1>
+    <form method="POST" action="{{ url_for('login') }}">
+        <div class="input-line">
+            <label for="email">Email:</label>
+            <input type="email" name="email" required autocomplete="off">
+        </div>
+        <div class="input-line">
+            <label for="password">Password:</label>
+            <div id="password">
+                <input type="password" name="password" id="passwordInput" required autocomplete="off">
+                <span id="toggle-password" onclick="togglePasswordVisibility()"><i class="fas fa-eye"></i></span>
+            </div>
+        </div>
+        <a href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+        <button type="submit">Login</button>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="error-message">
+                {% for category, message in messages %}
+                    {% if category == 'login-success' %}
+                        <div class="success-message">{{ message }}</div>
+                    {% elif category == 'login-error' %}
+                        <div class="error-message">{{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+</div>
+
+
+    <footer>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('referral_link') }}">Referral Link</a></li>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('deposit_form') }}">Deposit Form</a></li>
+                <li><a href="{{ url_for('admin_deposit_requests') }}">Admin Deposit Requests</a></li>
+                <li><a href="{{ url_for('withdrawal_form') }}">Withdraw Form</a></li>
+                <li><a href="{{ url_for('admin_withdraw_requests') }}">Admin Withdraw Requests</a></li>
+            </ul>
+        </nav>
+        <p style="font-size: 14px;">Explore the world of virtual mining with Virtual Miners. Join us today!</p>
+    </footer>
+
+    <script>
+        function toggleNav() {
+            var nav = document.querySelector('nav');
+            nav.style.display = (nav.style.display === 'none' || nav.style.display === '') ? 'block' : 'none';
+            
+            // Add event listener to close the navigation bar when clicking outside it
+            if (nav.style.display === 'block') {
+                document.addEventListener('click', closeNavOutside);
+            } else {
+                document.removeEventListener('click', closeNavOutside);
+            }
+        }
+
+        function closeNavOutside(event) {
+            var nav = document.querySelector('nav');
+            var navToggle = document.querySelector('.nav-toggle');
+
+            if (!nav.contains(event.target) && !navToggle.contains(event.target)) {
+                nav.style.display = 'none';
+                document.removeEventListener('click', closeNavOutside);
+            }
+        }
+
+        function togglePasswordVisibility() {
+            var passwordInput = document.getElementById("passwordInput");
+            var togglePassword = document.getElementById("toggle-password");
+            
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+            } else {
+                passwordInput.type = "password";
+            }
+        }
+
+        function hideMessages() {
+            var errorMessages = document.getElementsByClassName("error-message");
+            var successMessages = document.getElementsByClassName("success-message");
+
+            setTimeout(function() {
+                for (var i = 0; i < errorMessages.length; i++) {
+                    errorMessages[i].style.display = "none";
+                }
+                for (var j = 0; j < successMessages.length; j++) {
+                    successMessages[j].style.display = "none";
+                }
+            }, 3000);
+        }
+
+        // Call the hideMessages function on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', hideMessages);
+    </script>
+</body>
+</html>
+
